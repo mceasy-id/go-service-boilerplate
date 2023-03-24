@@ -1,0 +1,12 @@
+App:
+  Name: product-service
+  Version: "v1.0.0"
+  Port: 3000
+  Env: local
+
+Postgres:
+  Host: localhost
+  Port: 5432
+  User: secret
+  Password: secret
+  DBName: app-db

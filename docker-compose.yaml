@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  postgres-db:
+    container_name: postgres-db
+    image: postgres
+    environment:
+      TZ: Asia/Jakarta
+      POSTGRES_USER: ${POSTGRES_USER:-secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      POSTGRES_DB: ${POSTGRES_DBNAME:-app-db}
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 0.5s
+      timeout: 10s
+      retries: 10
+
+  alembic-migrator:
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    container_name: alembic-migrator
+    image: ghcr.io/fathilarham/alembic-migrator:latest
+    environment:
+      HOST: postgres-db
+      PORT: 5432
+      USER: ${POSTGRES_USER:-secret}
+      PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      DB_NAME: ${POSTGRES_DBNAME:-app-db}
+    volumes:
+      - ./database/migrations/versions:/app/alembic/versions
+      - ./database/migrations/schema.py:/app/schema.py
+    stdin_open: true
