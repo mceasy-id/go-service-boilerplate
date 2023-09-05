@@ -1,0 +1,43 @@
+App:
+  Name: service-demo
+  Version: "v1.0.0"
+  Port: 5001
+  Env: local
+  Key: 5FedUcmYxbd7pgpNOEosm24DM6HWX/9UuEXhKt4jmsk=
+
+Authentication:
+  Key: Mceasy123!
+
+Logger:
+  Mode: development
+  Level: debug
+
+Postgres:
+  Host: localhost
+  Port: 5000
+  DBName: app-db
+  User: secret
+  Password: secret
+
+Observability:
+  Enable: false
+  Mode: otlp
+  OtlpEndpoint: "localhost:4317"
+
+S3: 
+  BucketName: mceasy-platform-dev
+
+ExternalURI:
+  MasterData:
+    Address: http://localhost:3001/internal/api/address
+    Vehicle: http://localhost:3001/internal/api/vehicle
+    User:  http://localhost:3001/internal/api/user
+    CompanyProfile: http://localhost:3001/internal/api/company
+    Token: Gsq9ztEolZydaYWI47nOihL9AG9DnLmy
+  Order:
+    DeliveryOrder: http://localhost:5004/internal/api/v1/delivery-order
+    Token: Uv38ByGCZU8WP18PmmIdcpVmx00QA3xNe7sEB9Hixkk=
+
+  PDF: http://localhost:80/fleet-task
+  Identity: https://api-dev.mceasy.com/identity/api/middleware/spec
+  Scope: https://api-dev.mceasy.com/identity/api/oauth/token/scope

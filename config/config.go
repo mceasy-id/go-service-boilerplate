@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 
@@ -9,8 +10,12 @@ import (
 )
 
 type Config struct {
-	App      AppConfig
-	Postgres PostgresConfig
+	App            AppConfig
+	Authentication AuthenticationConfig
+	Logger         LoggerConfig
+	Postgres       PostgresConfig
+	Observability  ObservabilityConfig
+	ExternalURI    ExternalURIConfig
 }
 
 type AppConfig struct {
@@ -18,6 +23,12 @@ type AppConfig struct {
 	Version string
 	Port    string
 	Env     string
+	Key     string
+}
+
+type LoggerConfig struct {
+	Mode  string
+	Level string
 }
 
 type PostgresConfig struct {
@@ -28,11 +39,40 @@ type PostgresConfig struct {
 	DBName   string
 }
 
-func LoadConfig() (Config, error) {
+type ObservabilityConfig struct {
+	Enable       bool
+	Mode         string
+	OtlpEndpoint string
+}
+
+type AuthenticationConfig struct {
+	Key string
+}
+
+type ExternalURIConfig struct {
+	// Config for external URI
+	MasterData MasterData
+	Identity   string
+	Scope      string
+}
+
+type MasterData struct {
+	Address        string
+	Vehicle        string
+	User           string
+	CompanyProfile string
+	Token          string
+}
+
+func (m MasterData) GetBearerToken() string {
+	return "Bearer " + m.Token
+}
+
+func LoadConfig(env string) (Config, error) {
 	// Load Config
 	v := viper.New()
 
-	v.SetConfigName("config/config")
+	v.SetConfigName(fmt.Sprintf("config/config-%s", env))
 	v.AddConfigPath(".")
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -58,6 +98,7 @@ func LoadConfig() (Config, error) {
 func LoadConfigPath(path string) (Config, error) {
 	// Load Config
 	v := viper.New()
+
 	v.SetConfigName(path)
 	v.AddConfigPath(".")
 	v.AutomaticEnv()

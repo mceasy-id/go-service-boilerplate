@@ -1,14 +1,14 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"mceasy/service-demo/config"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-func GetDatabaseConnection(config *config.Config) (*sql.DB, error) {
+func GetPostgreConnection(config config.Config) (*sqlx.DB, error) {
 	dbHost := config.Postgres.Host
 	dbPort := config.Postgres.Port
 	dbUser := config.Postgres.User
@@ -16,7 +16,7 @@ func GetDatabaseConnection(config *config.Config) (*sql.DB, error) {
 	dbName := config.Postgres.DBName
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
-	db, err := sql.Open("postgres", dsn)
+	db, err := sqlx.Open("postgres", dsn)
 
 	if err != nil {
 		return nil, err
