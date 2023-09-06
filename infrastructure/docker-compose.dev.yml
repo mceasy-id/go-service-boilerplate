@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  postgres-db:
+    container_name: postgres-db
+    image: postgres
+    environment:
+      TZ: Asia/Jakarta
+      POSTGRES_USER: ${POSTGRES_USER:-secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      POSTGRES_DB: ${POSTGRES_DBNAME:-app-db}
+    restart: unless-stopped
+    ports:
+      - 5000:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 0.5s
+      timeout: 10s
+      retries: 10
+
+  db-migrator:
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    container_name: db-migrator
+    image: hub.mceasy.com/db-migrator:v1.0
+    environment:
+      CONFIG_TYPE: env
+      PG_HOST: postgres-db
+      PG_PORT: 5432
+      PG_USER: ${POSTGRES_USER:-secret}
+      PG_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      PG_DBNAME: ${POSTGRES_DBNAME:-app-db}
+    volumes:
+      - ../database/migrations/versions:/app/alembic/versions
+      - ../database/migrations/schema.py:/app/schema.py
+    stdin_open: true
