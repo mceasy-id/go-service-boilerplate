@@ -69,5 +69,3 @@ You can use this Docker Compose file during development to run the necessary dep
 ## `Makefile`
 
 Our Makefile offers a collection of convenient commands for various tasks, simplifying development and operational processes.
-
-Feel free to delve into these directories to explore the codebase's organization further and locate specific components as needed.
